@@ -1,0 +1,7 @@
+{
+  "name": "EcoBa-Front",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

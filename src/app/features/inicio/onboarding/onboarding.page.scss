@@ -1,0 +1,256 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap');
+
+:host {
+  --green-primary: #3aad6f;
+  --green-light: #e8f7ef;
+  --green-mid: #5bc68a;
+  --green-dark: #267a4e;
+  --white: #ffffff;
+  --text-dark: #1a2e22;
+  --text-mid: #4a7060;
+  --text-light: #8aab97;
+}
+
+ion-content.onboarding-content {
+  --background: linear-gradient(180deg, #eef3f0 0%, #e5ebe7 100%);
+  font-family: 'Nunito', sans-serif;
+}
+
+.phone-frame {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+#onboarding {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+}
+
+.slides-track {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide {
+  min-width: 100%;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.slide-bg-blob {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.bg-green {
+  background: #e8f7ef;
+}
+
+.bg-blue {
+  background: #e6f4fb;
+}
+
+.bg-purple {
+  background: #f0ecff;
+}
+
+.slide-illustration {
+  width: 100%;
+  height: 320px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.slide-image {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 12px 28px rgba(58, 173, 111, 0.12));
+}
+
+.slide-image-large {
+  width: 290px;
+  height: 270px;
+  padding-top: 0px;
+}
+
+.slide-content {
+  flex: 1;
+  z-index: 1;
+  padding: 0 36px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.slide-subtitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green-primary);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.slide-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  max-width: 300px;
+}
+
+.slide-text {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-mid);
+  line-height: 1.65;
+  max-width: 280px;
+}
+
+.onboarding-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 32px 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  z-index: 10;
+}
+
+.dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: #d0e8da;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.dot.active {
+  width: 24px;
+  background: var(--green-primary);
+}
+
+.btn-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.btn-skip {
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-light);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 4px;
+  transition: color 0.2s;
+}
+
+.btn-skip:hover {
+  color: var(--text-mid);
+}
+
+.btn-next {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--green-primary);
+  border: none;
+  border-radius: 100px;
+  padding: 14px 32px;
+  cursor: pointer;
+  flex: 1;
+  max-width: 220px;
+  box-shadow: 0 8px 24px rgba(58, 173, 111, 0.35);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  letter-spacing: 0.2px;
+}
+
+.btn-next:hover {
+  background: var(--green-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(58, 173, 111, 0.4);
+}
+
+.btn-next:active {
+  transform: translateY(0);
+}
+
+.btn-next.last {
+  max-width: 100%;
+  background: var(--green-dark);
+  font-size: 16px;
+  padding: 16px 32px;
+}
+
+.hide {
+  display: none !important;
+}
+
+@media (max-width: 480px) {
+  .slide-illustration {
+    height: 300px;
+    padding-top: 28px;
+  }
+
+  .slide-image {
+    width: 240px;
+    height: 240px;
+  }
+
+  .slide-title {
+    font-size: 26px;
+  }
+
+  .slide-text {
+    font-size: 14px;
+    max-width: 290px;
+  }
+
+  .onboarding-bottom {
+    padding: 0 24px 36px;
+  }
+}

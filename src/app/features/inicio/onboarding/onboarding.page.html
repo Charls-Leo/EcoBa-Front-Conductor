@@ -1,0 +1,90 @@
+<ion-content [fullscreen]="true" class="onboarding-content">
+  <div class="phone-frame">
+    <div id="onboarding">
+      <div class="slides-track" [style.transform]="getTrackTransform()">
+
+        <!-- SLIDE 1 -->
+        <div class="slide">
+          <div class="slide-bg-blob bg-green"></div>
+
+          <div class="slide-illustration">
+            <img
+              src="assets/images/onboarding1.1.png"
+              alt="Reporta incidencias"
+              class="slide-image"
+            />
+          </div>
+
+          <div class="slide-content">
+            <div class="slide-subtitle">Paso 1</div>
+            <div class="slide-title">Reporta incidencias</div>
+            <div class="slide-text">
+              Informa problemas relacionados con residuos o puntos que necesiten atención para ayudar a mantener la ciudad limpia.
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2 -->
+        <div class="slide">
+          
+          <div class="slide-illustration">
+            <img
+                src="assets/images/onboarding2.png"
+                alt="Consulta rutas y recorridos"
+                class="slide-image-large"
+            />
+          </div>
+
+          <div class="slide-content">
+            <div class="slide-subtitle">Paso 2</div>
+            <div class="slide-title">Consulta rutas y recorridos</div>
+            <div class="slide-text">
+              Visualiza información útil sobre recorridos o procesos de recolección de manera clara y organizada.
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3 -->
+        <div class="slide">
+          <div class="slide-illustration">
+            <img
+              src="assets/images/onboarding3.png"
+              alt="Gestiona todo en un solo lugar"
+              class="slide-image-large"
+            />
+          </div>
+
+          <div class="slide-content">
+            <div class="slide-subtitle">Paso 3</div>
+            <div class="slide-title">Gestiona todo en un solo lugar</div>
+            <div class="slide-text">
+              Accede a una experiencia simple y moderna para conocer, consultar y usar mejor los servicios de EcoBahía.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="onboarding-bottom">
+        <div class="dots">
+          <div
+            class="dot"
+            *ngFor="let slide of slides; let i = index"
+            [class.active]="i === current"
+            (click)="goTo(i)">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-skip" [class.hide]="isLastSlide()" (click)="skipToHome()">
+            Omitir
+          </button>
+
+          <button class="btn-next" [class.last]="isLastSlide()" (click)="nextSlide()">
+            {{ isLastSlide() ? 'Comenzar' : 'Siguiente →' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
