@@ -1,0 +1,91 @@
+<ion-content [fullscreen]="true" class="registro-content">
+  <div class="registro-page">
+    <div class="registro-blob registro-blob-1"></div>
+    <div class="registro-blob registro-blob-2"></div>
+
+    <div class="registro-header">
+      <div class="brand-wrap">
+        <div class="brand-icon">
+          <img src="assets/images/logo3.png" alt="Logo EcoBahía" class="brand-img" />
+        </div>
+
+        <div class="brand-text">
+          <div class="brand-name">Eco<span>Bahía</span></div>
+          <div class="brand-role">Registro conductores</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="registro-main">
+      <div class="registro-card">
+        <div class="card-badge">Nuevo acceso</div>
+
+        <h1 class="registro-title">Crear cuenta</h1>
+        <p class="registro-subtitle">
+          Registra tus datos para ingresar a la plataforma de conductores.
+        </p>
+
+        <form [formGroup]="registerForm" (ngSubmit)="submit()" class="registro-form">
+          <div class="input-group">
+            <label class="input-label">Nombre completo</label>
+            <ion-item lines="none" class="custom-item">
+              <ion-input formControlName="fullName" type="text" placeholder="Ej: Carlos Ramírez"></ion-input>
+            </ion-item>
+            <div class="error-text" *ngIf="isFieldInvalid('fullName')">
+              Ingresa tu nombre completo.
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Correo electrónico</label>
+            <ion-item lines="none" class="custom-item">
+              <ion-input formControlName="email" type="email" placeholder="correo@ejemplo.com"></ion-input>
+            </ion-item>
+            <div class="error-text" *ngIf="isFieldInvalid('email')">
+              Ingresa un correo válido.
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Documento</label>
+            <ion-item lines="none" class="custom-item">
+              <ion-input formControlName="document" type="text" placeholder="Número de documento"></ion-input>
+            </ion-item>
+            <div class="error-text" *ngIf="isFieldInvalid('document')">
+              Ingresa tu documento.
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Contraseña</label>
+            <ion-item lines="none" class="custom-item">
+              <ion-input
+                formControlName="password"
+                [type]="showPassword ? 'text' : 'password'"
+                placeholder="Crea una contraseña">
+              </ion-input>
+
+              <button type="button" class="toggle-password" (click)="togglePassword()">
+                {{ showPassword ? 'Ocultar' : 'Ver' }}
+              </button>
+            </ion-item>
+            <div class="error-text" *ngIf="isFieldInvalid('password')">
+              La contraseña debe tener al menos 4 caracteres.
+            </div>
+          </div>
+
+          <button type="submit" class="registro-btn">
+            Registrarme
+          </button>
+        </form>
+
+        <div class="login-box">
+          <span>¿Ya tienes cuenta?</span>
+          <button type="button" class="login-link" (click)="goToLogin()">
+            Iniciar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

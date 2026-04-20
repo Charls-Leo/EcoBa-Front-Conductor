@@ -10,15 +10,19 @@
       </div>
 
       <div class="top-bar-actions">
-        <button class="icon-btn" type="button">
-          <svg viewBox="0 0 24 24">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-          </svg>
-          <div class="notif-badge"></div>
+        <button
+          *ngIf="!isLoggedIn"
+          class="login-top-btn"
+          type="button"
+          (click)="goToTopAction()">
+          Iniciar sesión
         </button>
 
-        <button class="icon-btn" type="button">
+        <button
+          *ngIf="isLoggedIn"
+          class="icon-btn profile-btn"
+          type="button"
+          (click)="goToTopAction()">
           <svg viewBox="0 0 24 24">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
@@ -29,8 +33,8 @@
 
     <div class="scroll-content">
       <div class="greeting-section">
-        <div class="greeting-name">Hola, <span>Bienvenido 👋</span></div>
-        <div class="greeting-sub">Gestiona los residuos de tu ciudad hoy</div>
+        <div class="greeting-name">Hola, <span>Conductor 👋</span></div>
+        <div class="greeting-sub">Tu panel de gestión de recolección</div>
       </div>
 
       <div class="banner-section">
@@ -39,9 +43,9 @@
           <div class="banner-blob2"></div>
 
           <div class="banner-text">
-            <div class="banner-label">Esta semana</div>
-            <div class="banner-title">Recolección<br>programada 🗓</div>
-            <button class="banner-cta" type="button">Ver calendario</button>
+            <div class="banner-label">Hoy</div>
+            <div class="banner-title">Recorrido<br>asignado 🚛</div>
+            <button class="banner-cta" type="button" (click)="goTo('/recorridos')">Ver recorrido</button>
           </div>
 
           <div class="banner-illustration">
@@ -57,20 +61,22 @@
 
       <div class="grid-section">
         <div class="quick-grid">
-          <div class="quick-card" [ngClass]="item.cardClass" *ngFor="let item of quickAccess">
+          <div
+            class="quick-card"
+            [ngClass]="item.cardClass"
+            *ngFor="let item of quickAccess"
+            (click)="goTo(item.route)">
             <div class="card-corner"></div>
 
             <div class="card-icon-wrap">
               <ng-container [ngSwitch]="item.icon">
-                <svg *ngSwitchCase="'report'" viewBox="0 0 24 24">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                <svg *ngSwitchCase="'recorridos'" viewBox="0 0 24 24">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                 </svg>
 
                 <svg *ngSwitchCase="'routes'" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
+                  <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
                 </svg>
 
                 <svg *ngSwitchCase="'map'" viewBox="0 0 24 24">
@@ -79,10 +85,9 @@
                   <line x1="16" y1="6" x2="16" y2="22"></line>
                 </svg>
 
-                <svg *ngSwitchCase="'info'" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                <svg *ngSwitchCase="'profile'" viewBox="0 0 24 24">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
                 </svg>
 
                 <svg *ngSwitchCase="'help'" viewBox="0 0 24 24">
@@ -91,9 +96,10 @@
                   <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
 
-                <svg *ngSwitchCase="'profile'" viewBox="0 0 24 24">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
+                <svg *ngSwitchCase="'report'" viewBox="0 0 24 24">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
               </ng-container>
             </div>
@@ -114,18 +120,17 @@
           <div class="activity-item" *ngFor="let activity of recentActivity">
             <div class="activity-icon" [style.background]="activity.bg">
               <ng-container [ngSwitch]="activity.icon">
+                <svg *ngSwitchCase="'recorridos'" viewBox="0 0 24 24" [style.stroke]="activity.iconColor">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+
+                <svg *ngSwitchCase="'routes'" viewBox="0 0 24 24" [style.stroke]="activity.iconColor">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                </svg>
+
                 <svg *ngSwitchCase="'report'" viewBox="0 0 24 24" [style.stroke]="activity.iconColor">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-
-                <svg *ngSwitchCase="'map'" viewBox="0 0 24 24" [style.stroke]="activity.iconColor">
-                  <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-                </svg>
-
-                <svg *ngSwitchCase="'info'" viewBox="0 0 24 24" [style.stroke]="activity.iconColor">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="16" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
               </ng-container>
             </div>
@@ -145,6 +150,7 @@
       </div>
     </div>
 
+    <!-- BOTTOM NAV -->
     <div class="bottom-nav">
       <button class="nav-item" [class.active]="activeNav === 'inicio'" (click)="setActiveNav('inicio')" type="button">
         <svg viewBox="0 0 24 24">
@@ -154,27 +160,28 @@
         <span class="nav-label">Inicio</span>
       </button>
 
-      <button class="nav-item" [class.active]="activeNav === 'reportes'" (click)="setActiveNav('reportes')" type="button">
+      <button class="nav-item" [class.active]="activeNav === 'mapa'" (click)="setActiveNav('mapa')" type="button">
         <svg viewBox="0 0 24 24">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+          <line x1="8" y1="2" x2="8" y2="18"></line>
+          <line x1="16" y1="6" x2="16" y2="22"></line>
         </svg>
-        <span class="nav-label">Reportes</span>
+        <span class="nav-label">Mapa</span>
+      </button>
+
+      <button class="nav-item" [class.active]="activeNav === 'recorridos'" (click)="setActiveNav('recorridos')" type="button">
+        <svg viewBox="0 0 24 24">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+        <span class="nav-label">Recorridos</span>
       </button>
 
       <button class="nav-item" [class.active]="activeNav === 'rutas'" (click)="setActiveNav('rutas')" type="button">
         <svg viewBox="0 0 24 24">
-          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
         </svg>
         <span class="nav-label">Rutas</span>
-      </button>
-
-      <button class="nav-item" [class.active]="activeNav === 'info'" (click)="setActiveNav('info')" type="button">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>
-        <span class="nav-label">Info</span>
       </button>
 
       <button class="nav-item" [class.active]="activeNav === 'perfil'" (click)="setActiveNav('perfil')" type="button">

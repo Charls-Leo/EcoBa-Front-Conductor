@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -9,79 +11,122 @@ import { IonicModule } from '@ionic/angular';
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss']
 })
-export class HomePage {
+export class HomePage implements OnInit {
+  activeNav = 'inicio';
+  isLoggedIn = false;
+
   quickAccess = [
     {
-      title: 'Reportar',
-      desc: 'Registra un problema o incidencia',
-      cardClass: 'card-orange',
-      icon: 'report'
+      title: 'Recorridos',
+      desc: 'Consulta tu recorrido actual',
+      route: '/recorridos',
+      icon: 'recorridos',
+      cardClass: 'card-green'
     },
     {
       title: 'Rutas',
-      desc: 'Horarios y recorridos activos',
-      cardClass: 'card-blue',
-      icon: 'routes'
+      desc: 'Visualiza rutas asignadas',
+      route: '/rutas',
+      icon: 'routes',
+      cardClass: 'card-orange'
     },
     {
       title: 'Mapa',
-      desc: 'Explora zonas y puntos de acopio',
-      cardClass: 'card-green',
-      icon: 'map'
+      desc: 'Ubicación y seguimiento',
+      route: '/mapa',
+      icon: 'map',
+      cardClass: 'card-blue'
     },
     {
-      title: 'Información',
-      desc: 'Guías sobre reciclaje y residuos',
-      cardClass: 'card-purple',
-      icon: 'info'
-    },
-    {
-      title: 'Ayuda',
-      desc: 'Soporte y preguntas frecuentes',
-      cardClass: 'card-red',
-      icon: 'help'
+      title: 'Reportes',
+      desc: 'Novedades y alertas',
+      route: '/reportes',
+      icon: 'report',
+      cardClass: 'card-purple'
     },
     {
       title: 'Perfil',
-      desc: 'Tu cuenta y preferencias',
-      cardClass: 'card-teal',
-      icon: 'profile'
+      desc: 'Tus datos de acceso',
+      route: '/perfil',
+      icon: 'profile',
+      cardClass: 'card-red'
+    },
+    {
+      title: 'Ayuda',
+      desc: 'Soporte e información',
+      route: '/ayuda',
+      icon: 'help',
+      cardClass: 'card-teal'
     }
   ];
 
   recentActivity = [
     {
-      title: 'Reporte enviado',
-      sub: 'Calle 5 con Av. del Puerto · hace 2h',
-      badge: 'Pendiente',
-      badgeClass: 'badge-orange',
-      bg: '#fff3e8',
-      iconColor: '#f9a03f',
-      icon: 'report'
-    },
-    {
-      title: 'Ruta consultada',
-      sub: 'Zona norte · ayer 10:32 AM',
-      badge: 'Activa',
-      badgeClass: 'badge-green',
+      title: 'Ruta asignada',
+      sub: 'Recorrido de la mañana confirmado',
+      badge: 'Activo',
+      badgeClass: 'success',
+      icon: 'routes',
       bg: '#e8f7ef',
-      iconColor: '#3aad6f',
-      icon: 'map'
+      iconColor: '#2f9e62'
     },
     {
-      title: 'Guía revisada',
-      sub: 'Reciclaje doméstico · hace 3 días',
-      badge: 'Info',
-      badgeClass: 'badge-blue',
-      bg: '#e6f6fc',
-      iconColor: '#4ac2e8',
-      icon: 'info'
+      title: 'Reporte enviado',
+      sub: 'Incidencia registrada correctamente',
+      badge: 'Enviado',
+      badgeClass: 'info',
+      icon: 'report',
+      bg: '#eef5ff',
+      iconColor: '#4b7bec'
     }
   ];
 
-  activeNav = 'inicio';
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.checkSession();
+  }
+
+  ionViewWillEnter(): void {
+    this.checkSession();
+  }
+
+  checkSession(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
+  }
+
+  goTo(route: string): void {
+    this.router.navigate([route]);
+  }
+
+  goToTopAction(): void {
+    if (this.isLoggedIn) {
+      this.router.navigate(['/perfil']);
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
 
   setActiveNav(nav: string): void {
     this.activeNav = nav;
+
+    if (nav === 'inicio') {
+      this.router.navigate(['/inicio']);
+    } else if (nav === 'mapa') {
+      this.router.navigate(['/mapa']);
+    } else if (nav === 'recorridos') {
+      this.router.navigate(['/recorridos']);
+    } else if (nav === 'rutas') {
+      this.router.navigate(['/rutas']);
+    } else if (nav === 'perfil') {
+      if (this.authService.isLoggedIn()) {
+        this.router.navigate(['/perfil']);
+      } else {
+        this.router.navigate(['/login']);
+      }
+    }
   }
 }

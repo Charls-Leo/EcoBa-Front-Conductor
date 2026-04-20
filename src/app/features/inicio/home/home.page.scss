@@ -664,4 +664,23 @@ ion-content.home-content {
   .nav-item {
     padding: 6px 10px;
   }
+
+  .login-top-btn {
+    border: none;
+    background: linear-gradient(135deg, #3aad6f 0%, #267a4e 100%);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    box-shadow: 0 8px 18px rgba(58, 173, 111, 0.22);
+    cursor: pointer;
+  }
+
+  .profile-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
 }

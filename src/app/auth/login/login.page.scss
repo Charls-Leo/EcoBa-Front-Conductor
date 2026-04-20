@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap');
+
+:host {
+  --green-primary: #3aad6f;
+  --green-light: #e8f7ef;
+  --green-mid: #5bc68a;
+  --green-dark: #267a4e;
+  --white: #ffffff;
+  --gray-bg: #f4f7f5;
+  --text-dark: #1a2e22;
+  --text-mid: #4a7060;
+  --text-light: #8aab97;
+  --border-soft: #dfe9e3;
+  --danger: #e87070;
+}
+
+ion-content.login-content {
+  --background: linear-gradient(180deg, #eef3f0 0%, #e5ebe7 100%);
+  font-family: 'Nunito', sans-serif;
+}
+
+.login-page {
+  min-height: 100vh;
+  background: var(--gray-bg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-blob {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(58, 173, 111, 0.08);
+  z-index: 0;
+}
+
+.login-blob-1 {
+  width: 260px;
+  height: 260px;
+  top: -80px;
+  right: -90px;
+}
+
+.login-blob-2 {
+  width: 180px;
+  height: 180px;
+  left: -70px;
+  top: 260px;
+  background: rgba(91, 198, 138, 0.1);
+}
+
+.login-header {
+  position: relative;
+  z-index: 2;
+  padding: 26px 22px 12px;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--green-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(58, 173, 111, 0.22);
+  overflow: hidden;
+}
+
+.brand-img {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1;
+}
+
+.brand-name span {
+  color: var(--green-primary);
+}
+
+.brand-role {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.login-main {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 28px;
+  padding: 24px 18px 22px;
+  box-shadow: 0 16px 40px rgba(34, 73, 54, 0.1);
+  backdrop-filter: blur(6px);
+}
+
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  margin-bottom: 14px;
+}
+
+.login-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.login-subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-mid);
+}
+
+.login-form {
+  margin-top: 22px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.custom-item {
+  --background: #f8fbf9;
+  --border-radius: 16px;
+  --padding-start: 14px;
+  --inner-padding-end: 10px;
+  --min-height: 58px;
+  border: 1.5px solid var(--border-soft);
+  border-radius: 16px;
+}
+
+ion-input {
+  --padding-top: 14px;
+  --padding-bottom: 14px;
+  --color: var(--text-dark);
+  --placeholder-color: #98afa1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.toggle-password {
+  border: none;
+  background: transparent;
+  color: var(--green-primary);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 6px;
+  cursor: pointer;
+}
+
+.error-text {
+  margin-top: 6px;
+  padding-left: 4px;
+  font-size: 12px;
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 8px 2px 20px;
+}
+
+.remember-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-mid);
+  font-weight: 600;
+}
+
+.remember-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--green-primary);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--green-primary);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+}
+
+.login-btn {
+  width: 100%;
+  border: none;
+  border-radius: 18px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-dark) 100%);
+  color: var(--white);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 12px 28px rgba(58, 173, 111, 0.28);
+  cursor: pointer;
+}
+
+.register-box {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-mid);
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.register-link {
+  background: none;
+  border: none;
+  color: var(--green-primary);
+  font-weight: 800;
+  cursor: pointer;
+}

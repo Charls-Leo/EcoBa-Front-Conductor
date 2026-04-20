@@ -4,14 +4,14 @@ import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-rutas',
+  selector: 'app-perfil',
   standalone: true,
   imports: [CommonModule, IonicModule],
-  templateUrl: './rutas.page.html',
-  styleUrls: ['./rutas.page.scss']
+  templateUrl: './perfil.page.html',
+  styleUrls: ['./perfil.page.scss']
 })
-export class RutasPage {
-  activeNav = 'rutas';
+export class PerfilPage {
+  activeNav = 'perfil';
 
   constructor(private location: Location, private router: Router) {}
 
