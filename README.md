@@ -1,6 +1,6 @@
-# EcoBahía
+# EcoBahía Conductor
 
-<img width="536" height="1024" alt="image" src="https://github.com/user-attachments/assets/5452ecd4-4494-4c43-a3c0-bdc1e2fce71a" />
+<img width="636" height="424" alt="image" src="https://github.com/user-attachments/assets/5452ecd4-4494-4c43-a3c0-bdc1e2fce71a" />
 
 
 
