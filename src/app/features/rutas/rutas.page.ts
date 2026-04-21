@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { ApiService } from 'src/app/core/services/api.service';
 
 @Component({
   selector: 'app-rutas',
@@ -10,26 +11,49 @@ import { Router } from '@angular/router';
   templateUrl: './rutas.page.html',
   styleUrls: ['./rutas.page.scss']
 })
-export class RutasPage {
+export class RutasPage implements OnInit {
   activeNav = 'rutas';
+  rutas: any[] = [];
+  isLoading = true;
+  errorMsg = '';
 
-  constructor(private location: Location, private router: Router) {}
+  constructor(
+    private location: Location,
+    private router: Router,
+    private apiService: ApiService
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarRutas();
+  }
+
+  ionViewWillEnter(): void {
+    this.cargarRutas();
+  }
+
+  cargarRutas(): void {
+    this.isLoading = true;
+    this.errorMsg = '';
+
+    this.apiService.getRutas().subscribe({
+      next: (data) => {
+        // La API puede devolver un array directamente o un objeto con data
+        this.rutas = Array.isArray(data) ? data : (data?.data || data?.rutas || []);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando rutas:', err);
+        this.errorMsg = 'No se pudieron cargar las rutas';
+        this.isLoading = false;
+      }
+    });
+  }
 
   goBack(): void {
     this.location.back();
   }
 
-  setActiveNav(nav: string): void {
-    this.activeNav = nav;
-    const routes: Record<string, string> = {
-      inicio: '/home',
-      mapa: '/mapa',
-      recorridos: '/recorridos',
-      rutas: '/rutas',
-      perfil: '/perfil'
-    };
-    if (routes[nav]) {
-      this.router.navigate([routes[nav]]);
-    }
+  verMapa(rutaId: string | number): void {
+    this.router.navigate(['/tabs/mapa'], { queryParams: { ruta_id: rutaId } });
   }
 }

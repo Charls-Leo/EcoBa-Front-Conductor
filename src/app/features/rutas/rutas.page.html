@@ -9,67 +9,64 @@
       </button>
       <div class="header-info">
         <div class="header-title">Rutas</div>
-        <div class="header-subtitle">Horarios y recorridos asignados</div>
+        <div class="header-subtitle">Rutas de recolección disponibles</div>
       </div>
       <div class="header-spacer"></div>
     </div>
 
     <div class="scroll-content">
-      <div class="empty-state">
+
+      <!-- Loading -->
+      <div class="loading-state" *ngIf="isLoading">
+        <ion-spinner name="crescent" color="success"></ion-spinner>
+        <div class="loading-text">Cargando rutas...</div>
+      </div>
+
+      <!-- Error -->
+      <div class="empty-state" *ngIf="!isLoading && errorMsg">
+        <div class="empty-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <div class="empty-title">{{ errorMsg }}</div>
+      </div>
+
+      <!-- Sin rutas -->
+      <div class="empty-state" *ngIf="!isLoading && !errorMsg && rutas.length === 0">
         <div class="empty-icon-wrap">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10"></circle>
             <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
           </svg>
         </div>
-        <div class="empty-title">Próximamente</div>
+        <div class="empty-title">Sin rutas</div>
         <div class="empty-text">
-          Aquí podrás consultar las rutas asignadas, los horarios de recolección y el estado de cada recorrido.
+          No hay rutas de recolección registradas actualmente.
         </div>
       </div>
+
+      <!-- Lista de rutas -->
+      <div class="rutas-list" *ngIf="!isLoading && !errorMsg && rutas.length > 0">
+        <div class="ruta-card" *ngFor="let ruta of rutas" (click)="verMapa(ruta.id)" style="cursor: pointer;">
+          <div class="ruta-color" [style.background]="ruta.color_hex || '#3aad6f'"></div>
+          <div class="ruta-info">
+            <div class="ruta-name">{{ ruta.nombre_ruta || ruta.nombre || 'Ruta sin nombre' }}</div>
+            <div class="ruta-id">ID: {{ ruta.id }}</div>
+          </div>
+          <div class="ruta-arrow">
+            <svg viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <div class="bottom-nav">
-      <button class="nav-item" [class.active]="activeNav === 'inicio'" (click)="setActiveNav('inicio')" type="button">
-        <svg viewBox="0 0 24 24">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-        <span class="nav-label">Inicio</span>
-      </button>
 
-      <button class="nav-item" [class.active]="activeNav === 'mapa'" (click)="setActiveNav('mapa')" type="button">
-        <svg viewBox="0 0 24 24">
-          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-          <line x1="8" y1="2" x2="8" y2="18"></line>
-          <line x1="16" y1="6" x2="16" y2="22"></line>
-        </svg>
-        <span class="nav-label">Mapa</span>
-      </button>
-
-      <button class="nav-item" [class.active]="activeNav === 'recorridos'" (click)="setActiveNav('recorridos')" type="button">
-        <svg viewBox="0 0 24 24">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-        </svg>
-        <span class="nav-label">Recorridos</span>
-      </button>
-
-      <button class="nav-item" [class.active]="activeNav === 'rutas'" (click)="setActiveNav('rutas')" type="button">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-        </svg>
-        <span class="nav-label">Rutas</span>
-      </button>
-
-      <button class="nav-item" [class.active]="activeNav === 'perfil'" (click)="setActiveNav('perfil')" type="button">
-        <svg viewBox="0 0 24 24">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-        <span class="nav-label">Perfil</span>
-      </button>
-    </div>
 
   </div>
 </ion-content>

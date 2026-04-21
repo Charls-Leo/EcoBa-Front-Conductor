@@ -1,0 +1,46 @@
+<ion-tabs>
+
+  <div class="bottom-nav" slot="bottom">
+    <button class="nav-item" routerLink="/tabs/home" routerLinkActive="active" type="button">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span class="nav-label">Inicio</span>
+    </button>
+
+    <button class="nav-item" routerLink="/tabs/mapa" routerLinkActive="active" type="button">
+      <svg viewBox="0 0 24 24">
+        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+        <line x1="8" y1="2" x2="8" y2="18"></line>
+        <line x1="16" y1="6" x2="16" y2="22"></line>
+      </svg>
+      <span class="nav-label">Mapa</span>
+    </button>
+
+    <button class="nav-item" routerLink="/tabs/recorridos" routerLinkActive="active" type="button">
+      <svg viewBox="0 0 24 24">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+      </svg>
+      <span class="nav-label">Recorridos</span>
+    </button>
+
+    <button class="nav-item" routerLink="/tabs/rutas" routerLinkActive="active" type="button">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+      </svg>
+      <span class="nav-label">Rutas</span>
+    </button>
+
+    <!-- Perfil necesita comprobación si está logueado, lo manejamos con evento click -->
+    <button class="nav-item" [class.active]="activeTab === 'perfil'" (click)="goToPerfil()" type="button">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      <span class="nav-label">Perfil</span>
+    </button>
+  </div>
+
+</ion-tabs>

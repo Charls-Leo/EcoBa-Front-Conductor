@@ -36,6 +36,11 @@ ion-content.home-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
 }
 
 .top-bar-logo {
@@ -564,64 +569,7 @@ ion-content.home-content {
   );
 }
 
-.bottom-nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--white);
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 10px 10px 20px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
-}
 
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px 14px;
-  border-radius: 12px;
-  transition: background 0.2s;
-  border: none;
-  background: none;
-  font-family: 'Nunito', sans-serif;
-}
-
-.nav-item:hover {
-  background: var(--green-light);
-}
-
-.nav-item.active {
-  background: var(--green-light);
-}
-
-.nav-item svg {
-  width: 22px;
-  height: 22px;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  stroke: var(--text-light);
-}
-
-.nav-item.active svg {
-  stroke: var(--green-primary);
-}
-
-.nav-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-light);
-}
-
-.nav-item.active .nav-label {
-  color: var(--green-primary);
-}
 
 @media (max-width: 480px) {
   .top-bar {
@@ -657,13 +605,7 @@ ion-content.home-content {
     height: 82px;
   }
 
-  .bottom-nav {
-    padding: 10px 6px 18px;
-  }
 
-  .nav-item {
-    padding: 6px 10px;
-  }
 
   .login-top-btn {
     border: none;

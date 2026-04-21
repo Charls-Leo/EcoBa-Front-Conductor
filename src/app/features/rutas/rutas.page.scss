@@ -90,10 +90,7 @@ ion-content.section-content {
 .scroll-content {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 16px 16px 120px;
 }
 
 .empty-state {
@@ -102,6 +99,8 @@ ion-content.section-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 300px;
   gap: 12px;
 }
 
@@ -139,76 +138,88 @@ ion-content.section-content {
   max-width: 280px;
 }
 
-// Bottom nav
-.bottom-nav {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--white);
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 10px 10px 20px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-around;
-}
-
-.nav-item {
+// Loading
+.loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px 14px;
-  border-radius: 12px;
-  transition: background 0.2s;
-  border: none;
-  background: none;
-  font-family: 'Nunito', sans-serif;
+  justify-content: center;
+  min-height: 300px;
+  gap: 16px;
 }
 
-.nav-item:hover {
-  background: var(--green-light);
+.loading-text {
+  font-size: 14px;
+  color: var(--text-light);
+  font-weight: 600;
 }
 
-.nav-item.active {
-  background: var(--green-light);
+// Rutas list
+.rutas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.nav-item svg {
-  width: 22px;
-  height: 22px;
+.ruta-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.ruta-color {
+  width: 12px;
+  height: 44px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.ruta-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ruta-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ruta-id {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.ruta-arrow svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--text-light);
+  fill: none;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  fill: none;
-  stroke: var(--text-light);
 }
 
-.nav-item.active svg {
-  stroke: var(--green-primary);
-}
 
-.nav-label {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-light);
-}
-
-.nav-item.active .nav-label {
-  color: var(--green-primary);
-}
 
 @media (max-width: 480px) {
   .section-header-bar {
     padding: 16px 16px 14px;
   }
 
-  .bottom-nav {
-    padding: 10px 6px 18px;
-  }
 
-  .nav-item {
-    padding: 6px 10px;
-  }
 }

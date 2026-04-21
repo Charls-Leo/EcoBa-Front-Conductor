@@ -25,14 +25,34 @@
           Registra tus datos para ingresar a la plataforma de conductores.
         </p>
 
+        <!-- Error global del servidor -->
+        <div class="server-error" *ngIf="errorMessage">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          {{ errorMessage }}
+        </div>
+
         <form [formGroup]="registerForm" (ngSubmit)="submit()" class="registro-form">
           <div class="input-group">
-            <label class="input-label">Nombre completo</label>
+            <label class="input-label">Nombre</label>
             <ion-item lines="none" class="custom-item">
-              <ion-input formControlName="fullName" type="text" placeholder="Ej: Carlos Ramírez"></ion-input>
+              <ion-input formControlName="nombre" type="text" placeholder="Ej: Carlos"></ion-input>
             </ion-item>
-            <div class="error-text" *ngIf="isFieldInvalid('fullName')">
-              Ingresa tu nombre completo.
+            <div class="error-text" *ngIf="isFieldInvalid('nombre')">
+              Ingresa tu nombre.
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Apellido</label>
+            <ion-item lines="none" class="custom-item">
+              <ion-input formControlName="apellido" type="text" placeholder="Ej: Ramírez"></ion-input>
+            </ion-item>
+            <div class="error-text" *ngIf="isFieldInvalid('apellido')">
+              Ingresa tu apellido.
             </div>
           </div>
 
@@ -43,16 +63,6 @@
             </ion-item>
             <div class="error-text" *ngIf="isFieldInvalid('email')">
               Ingresa un correo válido.
-            </div>
-          </div>
-
-          <div class="input-group">
-            <label class="input-label">Documento</label>
-            <ion-item lines="none" class="custom-item">
-              <ion-input formControlName="document" type="text" placeholder="Número de documento"></ion-input>
-            </ion-item>
-            <div class="error-text" *ngIf="isFieldInvalid('document')">
-              Ingresa tu documento.
             </div>
           </div>
 
@@ -74,8 +84,9 @@
             </div>
           </div>
 
-          <button type="submit" class="registro-btn">
-            Registrarme
+          <button type="submit" class="registro-btn" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Registrarme</span>
+            <span *ngIf="isLoading">Registrando...</span>
           </button>
         </form>
 

@@ -94,11 +94,20 @@ export class HomePage implements OnInit {
     this.checkSession();
   }
 
+  get userName(): string {
+    const user = this.authService.getUser();
+    return user ? user.nombre : 'Conductor';
+  }
+
   checkSession(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
   }
 
   goTo(route: string): void {
+    if (!this.isLoggedIn && route !== '/ayuda') {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.router.navigate([route]);
   }
 
@@ -114,7 +123,7 @@ export class HomePage implements OnInit {
     this.activeNav = nav;
 
     if (nav === 'inicio') {
-      this.router.navigate(['/inicio']);
+      this.router.navigate(['/home']);
     } else if (nav === 'mapa') {
       this.router.navigate(['/mapa']);
     } else if (nav === 'recorridos') {
@@ -122,11 +131,7 @@ export class HomePage implements OnInit {
     } else if (nav === 'rutas') {
       this.router.navigate(['/rutas']);
     } else if (nav === 'perfil') {
-      if (this.authService.isLoggedIn()) {
-        this.router.navigate(['/perfil']);
-      } else {
-        this.router.navigate(['/login']);
-      }
+      this.router.navigate(['/perfil']);
     }
   }
 }

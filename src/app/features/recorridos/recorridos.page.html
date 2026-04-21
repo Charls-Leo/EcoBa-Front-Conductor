@@ -15,60 +15,71 @@
     </div>
 
     <div class="scroll-content">
-      <div class="empty-state">
+
+      <!-- Loading -->
+      <div class="loading-state" *ngIf="isLoading">
+        <ion-spinner name="crescent" color="success"></ion-spinner>
+        <div class="loading-text">Cargando recorridos...</div>
+      </div>
+
+      <!-- Error / No login -->
+      <div class="empty-state" *ngIf="!isLoading && errorMsg">
+        <div class="empty-icon-wrap">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+        </div>
+        <div class="empty-title">{{ errorMsg }}</div>
+      </div>
+
+      <!-- Sin recorridos -->
+      <div class="empty-state" *ngIf="!isLoading && !errorMsg && recorridos.length === 0">
         <div class="empty-icon-wrap">
           <svg viewBox="0 0 24 24">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
           </svg>
         </div>
-        <div class="empty-title">Próximamente</div>
+        <div class="empty-title">Sin recorridos</div>
         <div class="empty-text">
-          Aquí podrás ver tus recorridos asignados, el historial de recorridos completados y el progreso de cada jornada.
+          No tienes recorridos asignados actualmente. Cuando un administrador te asigne uno, aparecerá aquí.
         </div>
       </div>
+
+      <!-- Lista de recorridos -->
+      <div class="recorridos-list" *ngIf="!isLoading && !errorMsg && recorridos.length > 0">
+        <div class="recorrido-card" *ngFor="let r of recorridos" [class.activo]="r.activo">
+          <div class="recorrido-status">
+            <span class="status-badge" [class.active]="r.activo" [class.inactive]="!r.activo">
+              {{ r.activo ? 'Activo' : 'Finalizado' }}
+            </span>
+          </div>
+          <div class="recorrido-info">
+            <div class="recorrido-detail">
+              <svg viewBox="0 0 24 24" class="detail-icon">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              </svg>
+              <span>Ruta: {{ r.ruta_id }}</span>
+            </div>
+            <div class="recorrido-detail">
+              <svg viewBox="0 0 24 24" class="detail-icon">
+                <rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect>
+                <polygon points="16 8 20 6 20 16 16 14 16 8"></polygon>
+              </svg>
+              <span>Vehículo: {{ r.vehiculo_id }}</span>
+            </div>
+          </div>
+          <div class="recorrido-date" *ngIf="r.creado_en">
+            {{ r.creado_en | date:'dd/MM/yyyy HH:mm' }}
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <div class="bottom-nav">
-      <button class="nav-item" [class.active]="activeNav === 'inicio'" (click)="setActiveNav('inicio')" type="button">
-        <svg viewBox="0 0 24 24">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-        <span class="nav-label">Inicio</span>
-      </button>
 
-      <button class="nav-item" [class.active]="activeNav === 'mapa'" (click)="setActiveNav('mapa')" type="button">
-        <svg viewBox="0 0 24 24">
-          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-          <line x1="8" y1="2" x2="8" y2="18"></line>
-          <line x1="16" y1="6" x2="16" y2="22"></line>
-        </svg>
-        <span class="nav-label">Mapa</span>
-      </button>
-
-      <button class="nav-item" [class.active]="activeNav === 'recorridos'" (click)="setActiveNav('recorridos')" type="button">
-        <svg viewBox="0 0 24 24">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-        </svg>
-        <span class="nav-label">Recorridos</span>
-      </button>
-
-      <button class="nav-item" [class.active]="activeNav === 'rutas'" (click)="setActiveNav('rutas')" type="button">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-        </svg>
-        <span class="nav-label">Rutas</span>
-      </button>
-
-      <button class="nav-item" [class.active]="activeNav === 'perfil'" (click)="setActiveNav('perfil')" type="button">
-        <svg viewBox="0 0 24 24">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-        <span class="nav-label">Perfil</span>
-      </button>
-    </div>
 
   </div>
 </ion-content>

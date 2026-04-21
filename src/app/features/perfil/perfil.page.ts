@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-perfil',
@@ -10,10 +11,47 @@ import { Router } from '@angular/router';
   templateUrl: './perfil.page.html',
   styleUrls: ['./perfil.page.scss']
 })
-export class PerfilPage {
+export class PerfilPage implements OnInit {
   activeNav = 'perfil';
+  usuario: any = null;
+  isLoggedIn = false;
 
-  constructor(private location: Location, private router: Router) {}
+  constructor(
+    private location: Location,
+    private router: Router,
+    private authService: AuthService,
+    private toastCtrl: ToastController
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarPerfil();
+  }
+
+  ionViewWillEnter(): void {
+    this.cargarPerfil();
+  }
+
+  cargarPerfil(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
+    if (this.isLoggedIn) {
+      this.usuario = this.authService.getUser();
+    }
+  }
+
+  async cerrarSesion(): Promise<void> {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.usuario = null;
+
+    const toast = await this.toastCtrl.create({
+      message: 'Sesión cerrada correctamente',
+      duration: 2000,
+      color: 'medium',
+      position: 'top'
+    });
+    await toast.present();
+    this.router.navigate(['/home']);
+  }
 
   goBack(): void {
     this.location.back();

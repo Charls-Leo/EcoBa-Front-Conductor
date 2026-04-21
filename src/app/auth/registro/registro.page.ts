@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -14,18 +14,21 @@ import { AuthService } from 'src/app/core/services/auth.service';
 })
 export class RegistroPage {
   showPassword = false;
+  isLoading = false;
+  errorMessage = '';
 
   registerForm: FormGroup = this.fb.group({
-    fullName: ['', Validators.required],
+    nombre: ['', Validators.required],
+    apellido: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    document: ['', Validators.required],
     password: ['', [Validators.required, Validators.minLength(4)]]
   });
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastCtrl: ToastController
   ) {}
 
   togglePassword(): void {
@@ -37,21 +40,50 @@ export class RegistroPage {
     return !!field && field.invalid && field.touched;
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
     }
 
+    this.isLoading = true;
+    this.errorMessage = '';
+
     const formValue = this.registerForm.value;
 
     this.authService.register({
-      name: formValue.fullName,
       email: formValue.email,
-      document: formValue.document
-    });
+      password: formValue.password,
+      nombre: formValue.nombre,
+      apellido: formValue.apellido
+    }).subscribe({
+      next: async (response) => {
+        this.isLoading = false;
+        if (response.ok) {
+          const toast = await this.toastCtrl.create({
+            message: '¡Cuenta creada exitosamente! Inicia sesión.',
+            duration: 3000,
+            color: 'success',
+            position: 'top'
+          });
+          await toast.present();
+          this.router.navigate(['/login']);
+        }
+      },
+      error: async (err) => {
+        this.isLoading = false;
+        const mensaje = err.error?.error || 'Error al registrar usuario';
+        this.errorMessage = mensaje;
 
-    this.router.navigate(['/inicio']);
+        const toast = await this.toastCtrl.create({
+          message: mensaje,
+          duration: 3000,
+          color: 'danger',
+          position: 'top'
+        });
+        await toast.present();
+      }
+    });
   }
 
   goToLogin(): void {

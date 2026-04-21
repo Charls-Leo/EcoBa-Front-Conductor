@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ToastController } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -14,9 +14,11 @@ import { AuthService } from 'src/app/core/services/auth.service';
 })
 export class LoginPage {
   showPassword = false;
+  isLoading = false;
+  errorMessage = '';
 
   loginForm: FormGroup = this.fb.group({
-    user: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(4)]],
     remember: [false]
   });
@@ -24,7 +26,8 @@ export class LoginPage {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastCtrl: ToastController
   ) {}
 
   togglePassword(): void {
@@ -36,20 +39,45 @@ export class LoginPage {
     return !!field && field.invalid && field.touched;
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
-    const formValue = this.loginForm.value;
+    this.isLoading = true;
+    this.errorMessage = '';
 
-    this.authService.login({
-      name: 'Conductor',
-      user: formValue.user
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email, password).subscribe({
+      next: async (response) => {
+        this.isLoading = false;
+        if (response.ok) {
+          const toast = await this.toastCtrl.create({
+            message: `¡Bienvenido, ${response.usuario.nombre}!`,
+            duration: 2000,
+            color: 'success',
+            position: 'top'
+          });
+          await toast.present();
+          this.router.navigate(['/home']);
+        }
+      },
+      error: async (err) => {
+        this.isLoading = false;
+        const mensaje = err.error?.error || 'Error al conectar con el servidor';
+        this.errorMessage = mensaje;
+
+        const toast = await this.toastCtrl.create({
+          message: mensaje,
+          duration: 3000,
+          color: 'danger',
+          position: 'top'
+        });
+        await toast.present();
+      }
     });
-
-    this.router.navigate(['/inicio']);
   }
 
   goToRegister(): void {
