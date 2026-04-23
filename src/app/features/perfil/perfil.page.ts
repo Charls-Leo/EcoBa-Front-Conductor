@@ -3,6 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { IonicModule, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { Usuario } from 'src/app/core/models';
 
 @Component({
   selector: 'app-perfil',
@@ -13,7 +14,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 })
 export class PerfilPage implements OnInit {
   activeNav = 'perfil';
-  usuario: any = null;
+  usuario: Usuario | null = null;
   isLoggedIn = false;
 
   constructor(

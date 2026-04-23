@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
@@ -12,19 +13,28 @@ import { AuthService } from 'src/app/core/services/auth.service';
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule],
 })
-export class TabsPage {
+export class TabsPage implements OnDestroy {
   activeTab = '';
+
+  private destroy$ = new Subject<void>();
 
   constructor(private router: Router, private authService: AuthService) {
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      if (event.url.includes('/perfil')) {
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((event) => {
+      const navEnd = event as NavigationEnd;
+      if (navEnd.url.includes('/perfil')) {
         this.activeTab = 'perfil';
       } else {
         this.activeTab = '';
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   goToPerfil() {
@@ -35,4 +45,3 @@ export class TabsPage {
     }
   }
 }
-

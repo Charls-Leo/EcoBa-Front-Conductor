@@ -49,10 +49,10 @@
 
       <!-- Lista de recorridos -->
       <div class="recorridos-list" *ngIf="!isLoading && !errorMsg && recorridos.length > 0">
-        <div class="recorrido-card" *ngFor="let r of recorridos" [class.activo]="r.activo">
+        <div class="recorrido-card" *ngFor="let r of recorridos" [class.activo]="r.activo || trackingState.recorridoActivo == (r.id_recorrido || r.id)">
           <div class="recorrido-status">
-            <span class="status-badge" [class.active]="r.activo" [class.inactive]="!r.activo">
-              {{ r.activo ? 'Activo' : 'Finalizado' }}
+            <span class="status-badge" [class.active]="r.activo || trackingState.recorridoActivo == (r.id_recorrido || r.id)" [class.inactive]="!r.activo && trackingState.recorridoActivo != (r.id_recorrido || r.id)">
+              {{ (r.activo || trackingState.recorridoActivo == (r.id_recorrido || r.id)) ? 'En curso' : 'Pendiente' }}
             </span>
           </div>
           <div class="recorrido-info">
@@ -73,6 +73,30 @@
           </div>
           <div class="recorrido-date" *ngIf="r.creado_en">
             {{ r.creado_en | date:'dd/MM/yyyy HH:mm' }}
+          </div>
+
+          <!-- Acciones de Tracking GPS -->
+          <div class="recorrido-actions" style="margin-top: 15px;">
+            <!-- Mostrar "Iniciar" si no hay tracking activo (o es de otro recorrido) -->
+            <ion-button 
+              expand="block" 
+              color="primary"
+              *ngIf="trackingState.recorridoActivo != (r.id_recorrido || r.id)"
+              (click)="iniciarRecorrido(r)"
+              [disabled]="trackingState.recorridoActivo !== null">
+              <ion-icon name="play-outline" slot="start"></ion-icon>
+              Iniciar recorrido
+            </ion-button>
+
+            <!-- Mostrar "Detener" si este es el recorrido que estamos trackeando -->
+            <ion-button 
+              expand="block" 
+              color="danger"
+              *ngIf="trackingState.recorridoActivo == (r.id_recorrido || r.id)"
+              (click)="detenerRecorrido()">
+              <ion-icon name="stop-outline" slot="start"></ion-icon>
+              Detener recorrido
+            </ion-button>
           </div>
         </div>
       </div>

@@ -2,29 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Usuario, LoginResponse, RegisterRequest, RegisterResponse } from '../models';
 
-interface LoginResponse {
-  ok: boolean;
-  token: string;
-  usuario: {
-    id_usuario: string;
-    email: string;
-    id_rol: number;
-    nombre: string;
-    apellido: string;
-  };
-}
-
-interface RegisterResponse {
-  ok: boolean;
-  usuario: {
-    id_usuario: string;
-    email: string;
-    id_rol: number;
-    nombre: string;
-    apellido: string;
-  };
-}
+// =========================================================
+// Servicio de autenticación — conductor
+// Maneja login, registro, sesión y JWT
+// Headers JWT ahora inyectados automáticamente por AuthInterceptor
+// =========================================================
 
 @Injectable({
   providedIn: 'root'
@@ -55,15 +39,15 @@ export class AuthService {
   /**
    * Registro real contra el backend con id_rol=2 (conductor)
    */
-  register(data: { email: string; password: string; nombre: string; apellido: string }): Observable<RegisterResponse> {
-    const body = { ...data, id_rol: 2 };
+  register(data: RegisterRequest): Observable<RegisterResponse> {
+    const body: RegisterRequest = { ...data, id_rol: 2 };
     return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, body);
   }
 
   /**
    * Guardar sesión localmente
    */
-  private guardarSesion(token: string, usuario: any): void {
+  private guardarSesion(token: string, usuario: Usuario): void {
     localStorage.setItem(this.STORAGE_KEY, 'true');
     localStorage.setItem(this.TOKEN_KEY, token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(usuario));
@@ -86,18 +70,17 @@ export class AuthService {
   /**
    * Obtener datos del usuario guardado
    */
-  getUser(): any | null {
+  getUser(): Usuario | null {
     const user = localStorage.getItem(this.USER_KEY);
-    return user ? JSON.parse(user) : null;
+    return user ? JSON.parse(user) as Usuario : null;
   }
 
   /**
    * Obtener perfil actualizado desde el backend
+   * (Headers inyectados automáticamente por AuthInterceptor)
    */
-  getPerfil(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/me`, {
-      headers: { Authorization: `Bearer ${this.getToken()}` }
-    });
+  getPerfil(): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/me`);
   }
 
   /**

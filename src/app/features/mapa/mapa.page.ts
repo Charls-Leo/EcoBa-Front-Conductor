@@ -1,10 +1,14 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as L from 'leaflet';
-import { ApiService } from 'src/app/core/services/api.service';
-import { Subscription } from 'rxjs';
+import { RutaService } from 'src/app/core/services/ruta.service';
+import { Ruta, GeoJSONGeometry } from 'src/app/core/models';
+import { LocationService } from 'src/app/core/services/location.service';
+import { TrackingStateService } from 'src/app/core/services/tracking-state.service';
 
 @Component({
   selector: 'app-mapa',
@@ -13,37 +17,57 @@ import { Subscription } from 'rxjs';
   templateUrl: './mapa.page.html',
   styleUrls: ['./mapa.page.scss']
 })
-export class MapaPage implements OnDestroy {
+export class MapaPage implements OnDestroy, OnInit {
   private map: L.Map | undefined;
   private rutasLayer: L.FeatureGroup = L.featureGroup();
-  private querySub: Subscription | undefined;
-  
-  rutas: any[] = [];
+  private destroy$ = new Subject<void>();
+
+  rutas: Ruta[] = [];
   selectedRutaId: string | number | null = null;
+  private truckMarker: L.Marker | null = null;
 
   constructor(
     private location: Location, 
     private router: Router,
     private route: ActivatedRoute,
-    private apiService: ApiService
+    private rutaService: RutaService,
+    private locationService: LocationService,
+    public trackingState: TrackingStateService
   ) {}
+
+  ngOnInit() {
+    // Escuchar parámetros para saber si queremos ver una ruta específica
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        // Usar params, o si no hay, la ruta que esté siendo trackeada actualmente
+        this.selectedRutaId = params['ruta_id'] || this.trackingState.rutaActiva || null;
+        this.cargarRutas();
+      });
+
+    // Escuchar si el recorrido se detiene globalmente para limpiar el mapa al instante
+    this.trackingState.recorridoId$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(id => {
+        if (!id) {
+          this.selectedRutaId = null;
+          if (this.map) {
+            this.rutasLayer.clearLayers();
+            if (this.truckMarker) {
+              this.truckMarker.remove();
+              this.truckMarker = null;
+            }
+          }
+        }
+      });
+  }
 
   ionViewDidEnter() {
     if (!this.map) {
       this.initMap();
+      this.escucharUbicacionEnTiempoReal();
     }
     
-    // Escuchar parámetros para saber si queremos ver una ruta específica
-    if (!this.querySub) {
-      this.querySub = this.route.queryParams.subscribe(params => {
-        this.selectedRutaId = params['ruta_id'] || null;
-        this.cargarRutas();
-      });
-    } else {
-        // En caso de que ya estuviera suscrito, puede que los paramétros hayan cambiado por navegación
-        // El subscribe ya reacciona a los cambios automáticamente en Angular.
-    }
-
     // Forzar renderizado completo del mapa
     setTimeout(() => {
       if(this.map) {
@@ -56,14 +80,9 @@ export class MapaPage implements OnDestroy {
     }, 300);
   }
 
-  ionViewDidLeave() {
-    // Optionally clean up
-  }
-
   ngOnDestroy() {
-    if (this.querySub) {
-      this.querySub.unsubscribe();
-    }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private initMap(): void {
@@ -86,14 +105,36 @@ export class MapaPage implements OnDestroy {
     }, 500);
   }
 
+  escucharUbicacionEnTiempoReal() {
+    this.locationService.location$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(loc => {
+        if (!this.map) return;
+        
+        const latlng = L.latLng(loc.latitude, loc.longitude);
+        
+        if (!this.truckMarker) {
+          const iconHtml = this.makeTruckPinHtml();
+          const truckIcon = L.divIcon({ html: iconHtml, className: '', iconSize: [40, 40], iconAnchor: [20, 20] });
+          this.truckMarker = L.marker(latlng, { icon: truckIcon, zIndexOffset: 1000 }).addTo(this.map);
+          // Si es la primera vez que recibimos la ubicación, centramos el mapa en el conductor
+          this.map.setView(latlng, 16);
+        } else {
+          this.truckMarker.setLatLng(latlng);
+        }
+      });
+  }
+
   cargarRutas() {
-    this.apiService.getRutas().subscribe({
-      next: (data) => {
-        this.rutas = Array.isArray(data) ? data : (data?.data || data?.rutas || []);
-        this.dibujarRutas();
-      },
-      error: (err) => console.error('Error al cargar rutas', err)
-    });
+    this.rutaService.getRutas()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.rutas = Array.isArray(data) ? data : [];
+          this.dibujarRutas();
+        },
+        error: (err) => console.error('Error al cargar rutas', err)
+      });
   }
 
   dibujarRutas() {
@@ -109,23 +150,25 @@ export class MapaPage implements OnDestroy {
 
     rutasADibujar.forEach((ruta, index) => {
       if (ruta.shape) {
-        let shapeData = ruta.shape;
-        if (typeof shapeData === 'string') {
+        let shapeData: GeoJSONGeometry;
+        if (typeof ruta.shape === 'string') {
           try {
-            shapeData = JSON.parse(shapeData);
+            shapeData = JSON.parse(ruta.shape) as GeoJSONGeometry;
           } catch(e) {
             console.error('Error parsing route shape');
             return;
           }
+        } else {
+          shapeData = ruta.shape;
         }
         
-        let allCoords: [number, number][] = [];
+        let allCoords: number[][] = [];
         if (shapeData.type === 'MultiLineString' && shapeData.coordinates) {
-            shapeData.coordinates.forEach((line: [number, number][]) => {
+            (shapeData.coordinates as number[][][]).forEach((line: number[][]) => {
               allCoords.push(...line);
             });
         } else if (shapeData.coordinates) {
-            allCoords = shapeData.coordinates;
+            allCoords = shapeData.coordinates as number[][];
         } else {
             return;
         }
@@ -133,7 +176,7 @@ export class MapaPage implements OnDestroy {
         const color = ruta.color_hex || colores[index % colores.length];
 
         // L.latLng expects (lat, lng), GeoJSON has [lng, lat]
-        const latlngs = allCoords.map((c: [number, number]) => L.latLng(c[1], c[0]));
+        const latlngs = allCoords.map((c: number[]) => L.latLng(c[1], c[0]));
         
         const layer = L.polyline(latlngs, {
           color: color,
@@ -183,6 +226,17 @@ export class MapaPage implements OnDestroy {
         <!-- inner circle -->
         <circle cx="12" cy="8" r="2.6" fill="#ffffff" />
       </svg>
+    `;
+  }
+
+  // Genera HTML SVG para el pin del camión
+  private makeTruckPinHtml(): string {
+    return `
+      <div style="background-color: #4CAF50; border: 2px solid white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+          <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+        </svg>
+      </div>
     `;
   }
 

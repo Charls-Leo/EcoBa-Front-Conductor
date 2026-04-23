@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { ApiService } from 'src/app/core/services/api.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { RutaService } from 'src/app/core/services/ruta.service';
+import { Ruta } from 'src/app/core/models';
 
 @Component({
   selector: 'app-rutas',
@@ -11,16 +14,18 @@ import { ApiService } from 'src/app/core/services/api.service';
   templateUrl: './rutas.page.html',
   styleUrls: ['./rutas.page.scss']
 })
-export class RutasPage implements OnInit {
+export class RutasPage implements OnInit, OnDestroy {
   activeNav = 'rutas';
-  rutas: any[] = [];
+  rutas: Ruta[] = [];
   isLoading = true;
   errorMsg = '';
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private location: Location,
     private router: Router,
-    private apiService: ApiService
+    private rutaService: RutaService
   ) {}
 
   ngOnInit(): void {
@@ -31,22 +36,29 @@ export class RutasPage implements OnInit {
     this.cargarRutas();
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   cargarRutas(): void {
     this.isLoading = true;
     this.errorMsg = '';
 
-    this.apiService.getRutas().subscribe({
-      next: (data) => {
-        // La API puede devolver un array directamente o un objeto con data
-        this.rutas = Array.isArray(data) ? data : (data?.data || data?.rutas || []);
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error cargando rutas:', err);
-        this.errorMsg = 'No se pudieron cargar las rutas';
-        this.isLoading = false;
-      }
-    });
+    this.rutaService.getRutas()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          // La API puede devolver un array directamente o un objeto con data
+          this.rutas = Array.isArray(data) ? data : [];
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error cargando rutas:', err);
+          this.errorMsg = 'No se pudieron cargar las rutas';
+          this.isLoading = false;
+        }
+      });
   }
 
   goBack(): void {
