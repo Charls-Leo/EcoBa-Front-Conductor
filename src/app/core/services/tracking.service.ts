@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Subscription, BehaviorSubject } from 'rxjs';
+import { Subscription, BehaviorSubject, filter, firstValueFrom, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { LocationService } from './location.service';
 import { WebSocketService } from './websocket.service';
@@ -68,7 +68,25 @@ export class TrackingService {
 
     this.activeRecorridoId = recorridoId;
 
-    // 1. Iniciar captura GPS
+    // 1. Conectar WebSocket PRIMERO y esperar a que esté listo
+    const token = this.authService.getToken();
+    if (token) {
+      this.webSocketService.connect(token);
+      try {
+        // Esperar hasta 3 segundos a que el WebSocket conecte
+        await firstValueFrom(
+          this.webSocketService.connectionStatus$.pipe(
+            filter(status => status === 'connected'),
+            timeout(3000)
+          )
+        );
+        console.log('[TrackingService] WebSocket conectado — listo para enviar');
+      } catch {
+        console.warn('[TrackingService] WebSocket no conectó en 3s — se usará buffer offline');
+      }
+    }
+
+    // 2. Iniciar captura GPS
     await this.locationService.startWatching();
 
     if (!this.locationService.isWatching) {
@@ -77,13 +95,7 @@ export class TrackingService {
       return false;
     }
 
-    // 2. Intentar conectar WebSocket
-    const token = this.authService.getToken();
-    if (token) {
-      this.webSocketService.connect(token);
-    }
-
-    // 3. Suscribirse al stream de ubicaciones
+    // 3. Suscribirse al stream de ubicaciones (WebSocket ya debería estar listo)
     this.locationSub = this.locationService.location$.subscribe(location => {
       this.handleNewLocation(location, user.id_usuario);
     });

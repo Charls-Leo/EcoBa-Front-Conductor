@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap');
 
 :host {
+  --blue-primary: #4A90FF;
+  --blue-dark: #1a3a7a;
   --green-primary: #3aad6f;
   --green-light: #e8f7ef;
   --green-dark: #267a4e;
@@ -100,6 +102,91 @@ ion-content.section-content {
   #map {
     width: 100%;
     height: 100%;
+  }
+}
+
+// ═══════════════════════════════════
+// Animaciones del marcador del camión
+// ═══════════════════════════════════
+
+::ng-deep .truck-marker-wrapper {
+  position: relative;
+  overflow: visible !important;
+}
+
+// Pulso GPS radiante
+::ng-deep .gps-pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(74, 144, 255, 0.6);
+  animation: gpsPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes gpsPulse {
+  0% {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+    border-color: rgba(74, 144, 255, 0.6);
+  }
+  100% {
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+    border-color: rgba(74, 144, 255, 0);
+  }
+}
+
+// Pulso del punto de ruta (inicio/fin)
+::ng-deep .route-point-wrapper {
+  overflow: visible !important;
+}
+
+@keyframes pointPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+// ═══════════════════════════════════
+// Estilos del mapa oscuro
+// ═══════════════════════════════════
+
+// Suavizar los controles de zoom
+::ng-deep .leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  margin-right: 12px !important;
+  margin-bottom: 24px !important;
+}
+
+::ng-deep .leaflet-control-zoom a {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #1a2e22 !important;
+  border: none !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 18px !important;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f4f7f5 !important;
+    color: var(--blue-primary) !important;
   }
 }
 

@@ -1,43 +1,32 @@
-# EcoBahía Conductor — App Móvil
+# 📱 EcoBahía Conductor — App Móvil
 
-<img width="636" height="424" alt="image" src="https://github.com/user-attachments/assets/5452ecd4-4494-4c43-a3c0-bdc1e2fce71a" />
+**EcoBahía Conductor** es la aplicación móvil para los conductores del sistema de gestión inteligente de recolección de residuos. Permite a los conductores iniciar recorridos y transmitir su ubicación GPS en tiempo real al backend.
 
-## Descripción general
-
-**EcoBahía Conductor** es la aplicación móvil exclusiva para conductores del sistema ecoBahía de gestión inteligente de recolección de residuos.
-
-### Rol de la app en el sistema
+## 🧩 Rol en el sistema
 
 | Componente | Función |
-|------------|---------|
-| 📱 **App móvil** (este repo) | Envía datos del conductor al backend |
-| 🧠 Backend (Node.js + Express) | Centraliza toda la lógica de negocio |
-| 🌐 Frontend web (Angular) | **Panel de Administrador:** Visualiza datos en mapa en tiempo real y gestiona rutas/vehículos |
-
-La app permite a los conductores:
-- Iniciar sesión con credenciales exclusivas de conductor
-- Consultar rutas de recolección asignadas
-- Visualizar recorridos activos y finalizados
-- Ver rutas dibujadas en mapa interactivo (Leaflet)
-- Reportar incidencias
-- Gestionar su perfil
+|---|---|
+| 📱 **App móvil** (este repo) | Captura GPS del conductor y la envía en tiempo real al backend |
+| 🧠 Backend (Node.js + Express) | Centraliza lógica, BD y sincronización con API externa |
+| 🌐 Frontend web (Angular) | Panel de administrador: visualiza conductores en mapa en tiempo real |
 
 ---
 
-## Stack tecnológico
+## 🛠️ Stack Tecnológico
 
-| Tecnología | Versión |
-|------------|---------|
-| Angular | 20.x |
-| Ionic | 8.x |
-| Capacitor | 8.3 |
-| TypeScript | 5.9 |
-| Leaflet | 1.9 |
-| RxJS | 7.8 |
+| Tecnología | Versión | Uso |
+|---|---|---|
+| Angular | 20.x | Framework de la aplicación |
+| Ionic | 8.x | Componentes de UI móvil |
+| Capacitor | 8.3 | Acceso a GPS y APIs nativas |
+| TypeScript | 5.9 | Tipado estricto en todo el proyecto |
+| Leaflet | 1.9 | Mapa interactivo |
+| Socket.IO Client | 4.x | Comunicación en tiempo real |
+| RxJS | 7.8 | Programación reactiva |
 
 ---
 
-## Arquitectura del proyecto
+## 📁 Arquitectura del proyecto
 
 ```
 src/app/
@@ -47,162 +36,101 @@ src/app/
 ├── core/                         ← Servicios, modelos e infraestructura
 │   ├── models/
 │   │   ├── index.ts              ← Barrel export de todos los modelos
-│   │   ├── usuario.model.ts      ← Usuario, LoginRequest/Response, RegisterRequest/Response
+│   │   ├── usuario.model.ts      ← Usuario, LoginRequest/Response
 │   │   ├── ruta.model.ts         ← Ruta, GeoJSONGeometry
 │   │   ├── recorrido.model.ts    ← Recorrido (asignación conductor-ruta-vehículo)
 │   │   ├── vehiculo.model.ts     ← Vehiculo
-│   │   └── location.model.ts     ← LocationData, TrackingPayload (estructura futura GPS)
+│   │   └── location.model.ts     ← LocationData, TrackingPayload
 │   │
 │   ├── services/
 │   │   ├── auth.service.ts       ← Login, registro, sesión JWT, perfil
-│   │   ├── ruta.service.ts       ← GET /rutas (con normalización de respuesta)
-│   │   ├── recorrido.service.ts  ← GET /recorridos_locales/conductor/:id
-│   │   ├── vehiculo.service.ts   ← GET /vehiculos (solo lectura)
+│   │   ├── ruta.service.ts       ← GET /rutas
+│   │   ├── recorrido.service.ts  ← Recorridos del conductor (activar, desactivar)
+│   │   ├── vehiculo.service.ts   ← GET /vehiculos
 │   │   ├── usuario.service.ts    ← GET /usuarios/conductores
 │   │   ├── location.service.ts   ← Captura GPS (Capacitor Geolocation)
-│   │   ├── websocket.service.ts  ← Conexión Socket.IO al backend (con JWT auth)
-│   │   ├── tracking.service.ts   ← Emisión GPS, fallback offline y batch upload
-│   │   └── tracking-state.service.ts ← Gestión del recorrido activo global
+│   │   ├── websocket.service.ts  ← Conexión Socket.IO al backend (JWT auth)
+│   │   ├── tracking.service.ts   ← Orquesta: WS + GPS → envío de ubicaciones + buffer offline
+│   │   └── tracking-state.service.ts ← Estado global del recorrido activo
 │   │
 │   └── interceptors/
 │       └── auth.interceptor.ts   ← Inyección automática de JWT en requests HTTP
 │
-├── auth/                         ← Módulos de autenticación
-│   ├── login/
-│   │   ├── login.page.ts
-│   │   ├── login.page.html
-│   │   └── login.page.scss
-│   └── registro/
-│       ├── registro.page.ts
-│       ├── registro.page.html
-│       └── registro.page.scss
+├── auth/                         ← Pantallas de autenticación
+│   ├── login/                    ← Inicio de sesión de conductor
+│   └── registro/                 ← Registro de conductor
 │
-├── features/                     ← Páginas funcionales
+├── features/                     ← Pantallas funcionales
 │   ├── inicio/
 │   │   ├── splash/               ← Pantalla de carga inicial
 │   │   ├── onboarding/           ← Tutorial de bienvenida (3 pasos)
 │   │   └── home/                 ← Dashboard principal del conductor
 │   ├── mapa/                     ← Mapa interactivo con rutas (Leaflet)
 │   ├── rutas/                    ← Lista de rutas de recolección
-│   ├── recorridos/               ← Recorridos asignados al conductor
+│   ├── recorridos/               ← Iniciar/detener recorridos (activa tracking GPS)
 │   ├── perfil/                   ← Datos del conductor logueado
 │   ├── reportes/                 ← Reporte de incidencias
 │   └── ayuda/                    ← Soporte e información
 │
 └── layout/
     └── tabs/                     ← Navegación inferior por tabs
-        ├── tabs.page.ts
-        ├── tabs.page.html
-        └── tabs.page.scss
 ```
 
 ---
 
-## Principios de arquitectura
-
-### Servicios por dominio
-Cada servicio maneja un único recurso del backend. No existe un "God Service" monolítico.
-
-### Tipado estricto
-**Cero usos de `any`** en todo el proyecto. Cada endpoint tiene interfaces de request/response definidas en `core/models/`.
-
-### Interceptor de autenticación
-El JWT se inyecta automáticamente en todas las requests HTTP mediante `AuthInterceptor`. Las rutas públicas (`/login-conductor`, `/register`) se excluyen automáticamente.
-
-### Gestión de suscripciones RxJS
-Todos los componentes usan el patrón `takeUntil(destroy$)` para limpiar suscripciones y prevenir memory leaks:
-
-```typescript
-private destroy$ = new Subject<void>();
-
-ngOnDestroy(): void {
-  this.destroy$.next();
-  this.destroy$.complete();
-}
-```
-
-### Lazy loading
-Todas las páginas se cargan bajo demanda mediante `loadComponent()` en las rutas.
-
----
-
-## Flujo de la aplicación
+## 🔄 Flujo de la aplicación
 
 ```
 Splash → Onboarding → Home (dashboard)
-                         ├── Recorridos (requiere login)
-                         ├── Rutas (requiere login)
-                         ├── Mapa (requiere login)
-                         ├── Reportes (requiere login)
-                         ├── Perfil (requiere login)
-                         └── Ayuda (público)
-```
-
-### Flujo de autenticación
-```
-LoginPage → AuthService.login() → POST /usuarios/login-conductor
-                                      ↓
-                              localStorage (token + usuario)
-                                      ↓
-                              AuthInterceptor inyecta JWT automáticamente
+                         ├── Recorridos → Iniciar → Mapa (con tracking GPS activo)
+                         │                        Tooltip premium: placa + nombre de ruta
+                         ├── Rutas (consulta)
+                         ├── Mapa (visualización con estilo Google Maps)
+                         ├── Reportes
+                         ├── Perfil
+                         └── Ayuda
 ```
 
 ---
 
-## Endpoints consumidos
+## 📐 Principios de arquitectura
 
-| Método | Endpoint | Servicio | Descripción |
-|--------|----------|----------|-------------|
-| POST | `/usuarios/login-conductor` | AuthService | Login de conductor |
-| POST | `/usuarios/register` | AuthService | Registro de conductor |
-| GET | `/usuarios/me` | AuthService | Perfil actual |
-| GET | `/rutas` | RutaService | Listar rutas |
-| GET | `/rutas/:id` | RutaService | Ruta por ID |
-| GET | `/recorridos_locales/conductor/:id` | RecorridoService | Recorridos del conductor |
-| GET | `/recorridos_locales` | RecorridoService | Todos los recorridos |
-| GET | `/vehiculos` | VehiculoService | Listar vehículos |
-| GET | `/usuarios/conductores` | UsuarioService | Listar conductores |
-| POST | `/recorridos_locales/:id/activar` | RecorridoService | Cambia estado local a 'activo' al iniciar |
-| POST | `/recorridos_locales/:id/desactivar`| RecorridoService | Libera recursos al detener el recorrido |
+- **Servicios por dominio**: Cada servicio maneja un único recurso. No hay "God Service".
+- **Tipado estricto**: Cero usos de `any`. Interfaces definidas en `core/models/`.
+- **Interceptor JWT**: Token inyectado automáticamente en todas las requests HTTP.
+- **Limpieza RxJS**: Patrón `takeUntil(destroy$)` en todos los componentes.
+- **Lazy loading**: Todas las páginas se cargan bajo demanda.
+- **Offline-first**: Buffer de ubicaciones cuando no hay conexión WebSocket.
+- **Resolución de nombres**: En la pantalla de Recorridos se muestra el nombre de la ruta y la placa/marca del vehículo en lugar de los IDs crudos.
 
 ---
 
-## Tracking GPS en Tiempo Real (Implementado)
+## 🗺️ Mapa y Tracking
 
-La aplicación cuenta con un sistema robusto de seguimiento en tiempo real diseñado bajo la filosofía **Offline-First**.
-
-### Arquitectura de Tracking y Limpieza Reactiva
-1. **`LocationService`**: Captura la posición precisa vía Capacitor (con fallback para Web). Utiliza `ReplaySubject(1)` para mantener cacheada la última posición y evitar parpadeos visuales al cambiar de tabs.
-2. **`TrackingStateService`**: Mantiene en memoria el `recorrido_id` y el `ruta_id` activos. Garantiza que la aplicación sepa si está "En ruta" en cualquier pantalla.
-3. **`WebSocketService` & `TrackingService`**: Inician la transmisión mediante `socket.io-client` al backend.
-4. **Sincronización REST**: Al presionar "Iniciar" o "Finalizar", se dispara inmediatamente un `POST` al endpoint `/:id/activar` o `/:id/desactivar` para que la Base de Datos sea la única "fuente de verdad" del estado del conductor.
-5. **Limpieza Reactiva Visual**: En la página del Mapa (`mapa.page.ts`), una suscripción permanente al `TrackingStateService` escucha cuando el conductor finaliza el viaje (estado `null`) e instantáneamente borra del DOM el marcador del camión y la polilínea de la ruta, previniendo visualizaciones fantasmas.
+- **Tiles**: Google Maps (Roadmap) para un aspecto profesional.
+- **Sin botones de zoom**: Interfaz limpia, el usuario usa gestos táctiles (pinch-to-zoom).
+- **Marcador del conductor**: Círculo azul animado con pulso GPS y ícono SVG de camión.
+- **Tooltip premium**: Burbuja flotante sobre el marcador que muestra la **placa del vehículo** y el **nombre de la ruta activa**.
+- **Rutas con estilo 3 capas**: Glow (resplandor) + borde oscuro + línea principal vibrante.
+- **Marcadores de inicio/fin**: Círculos verde (▶) y rojo (■) con animación de pulso.
 
 ---
 
-## Cómo ejecutar el proyecto
+## 🚀 Cómo ejecutar
 
-### Requisitos previos
+### Requisitos
 - Node.js 18+
-- npm
 - Ionic CLI (`npm install -g @ionic/cli`)
 
-### Instalación y ejecución
+### Desarrollo (navegador)
 ```bash
 npm install
 ionic serve
 ```
 
-O alternativamente:
-```bash
-ng serve
-```
-
-### Build para Capacitor (móvil)
+### Build para móvil
 ```bash
 ionic build
 npx cap sync
 npx cap open android   # o ios
 ```
-
-> No se recomienda usar Go Live, ya que el proyecto está construido con Ionic + Angular y necesita ejecutarse mediante su servidor de desarrollo.

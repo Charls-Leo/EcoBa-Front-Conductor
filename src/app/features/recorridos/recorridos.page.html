@@ -61,14 +61,14 @@
                 <circle cx="12" cy="12" r="10"></circle>
                 <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
               </svg>
-              <span>Ruta: {{ r.ruta_id }}</span>
+              <span>{{ getNombreRuta(r.ruta_id) }}</span>
             </div>
             <div class="recorrido-detail">
               <svg viewBox="0 0 24 24" class="detail-icon">
                 <rect x="1" y="3" width="15" height="13" rx="2" ry="2"></rect>
                 <polygon points="16 8 20 6 20 16 16 14 16 8"></polygon>
               </svg>
-              <span>Vehículo: {{ r.vehiculo_id }}</span>
+              <span>{{ getPlacaVehiculo(r.vehiculo_id) }}</span>
             </div>
           </div>
           <div class="recorrido-date" *ngIf="r.creado_en">
