@@ -11,6 +11,37 @@
   --text-light: #8aab97;
 }
 
+:host-context(.dark-theme) {
+  --green-light: #143326;
+  --white: #17221d;
+  --gray-bg: #0d1411;
+  --text-dark: #eef7f1;
+  --text-mid: #b5cabe;
+  --text-light: #83a191;
+}
+
+// Separadores internos oscuros
+:host-context(.dark-theme) .detail-row {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+// Botón logout oscuro
+:host-context(.dark-theme) .logout-btn {
+  background: #2a1212;
+  border-color: #5a2020;
+  color: #f87171;
+
+  &:active {
+    background: #3a1818;
+  }
+}
+
+// Sombras más visibles en oscuro
+:host-context(.dark-theme) .perfil-avatar-section,
+:host-context(.dark-theme) .perfil-details {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
 ion-content.section-content {
   --background: var(--gray-bg);
   font-family: 'Nunito', sans-serif;

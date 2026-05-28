@@ -16,6 +16,11 @@
   box-sizing: border-box;
 }
 
+:host-context(.dark-theme) .bottom-nav {
+  background: #17221d;
+  border-top-color: rgba(255, 255, 255, 0.06);
+}
+
 .nav-item {
   display: flex;
   flex-direction: column;
@@ -33,6 +38,11 @@
 
 .nav-item:hover, .nav-item.active {
   background: var(--green-light, #e8f7ef);
+}
+
+:host-context(.dark-theme) .nav-item:hover,
+:host-context(.dark-theme) .nav-item.active {
+  background: #143326;
 }
 
 .nav-item svg {
@@ -69,4 +79,3 @@
     padding: 2px 10px;
   }
 }
-

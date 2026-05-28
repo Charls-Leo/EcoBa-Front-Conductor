@@ -37,6 +37,25 @@
 @import '@ionic/angular/css/palettes/dark.system.css';
 
 /* ==========================================================================
+   Dark Theme — Variables globales de EcoBahía Conductor
+   ========================================================================== */
+body.dark-theme {
+  --ion-background-color: #0d1411;
+  --ion-background-color-rgb: 13, 20, 17;
+  --ion-text-color: #eef7f1;
+  --ion-text-color-rgb: 238, 247, 241;
+  --ion-color-step-50: #17221d;
+  --ion-color-step-100: #1f2d26;
+  --ion-toolbar-background: #17221d;
+  --ion-tab-bar-background: #17221d;
+}
+
+body.dark-theme ion-alert {
+  --background: #17221d;
+  color: #eef7f1;
+}
+
+/* ==========================================================================
    Safe Area Adjustments (Fixes notch and navigation bar overlap)
    ========================================================================== */
 

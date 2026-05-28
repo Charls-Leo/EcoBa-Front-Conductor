@@ -17,10 +17,24 @@
   --teal: #2ec4a9;
 }
 
+:host-context(.dark-theme) {
+  --green-light: #143326;
+  --white: #17221d;
+  --gray-bg: #0d1411;
+  --text-dark: #eef7f1;
+  --text-mid: #b5cabe;
+  --text-light: #83a191;
+}
+
 ion-content.home-content {
   --background: #e0e8e4;
   font-family: 'Nunito', sans-serif;
 }
+
+:host-context(.dark-theme) ion-content.home-content {
+  --background: #0d1411;
+}
+
 
 /* Bloquea SOLO el scroll horizontal, respetando el vertical */
 ion-content.home-content::part(scroll) {
@@ -91,6 +105,51 @@ ion-content.home-content::part(scroll) {
   gap: 8px;
   align-items: center;
 }
+
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 14px;
+  background: var(--green-light);
+  color: var(--green-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(58, 173, 111, 0.14);
+  transition: background 0.2s, color 0.2s;
+
+  svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+:host-context(.dark-theme) .theme-toggle {
+  background: #22362d;
+  color: #b8f5d0;
+}
+
+:host-context(.dark-theme) .banner-card {
+  background: linear-gradient(135deg, #10241b 0%, #1d5a3a 100%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32);
+}
+
+:host-context(.dark-theme) .quick-card,
+:host-context(.dark-theme) .activity-item {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
 
 .icon-btn {
   width: 38px;

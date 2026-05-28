@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { ThemeService } from 'src/app/core/services/theme.service';
 
 @Component({
   selector: 'app-home',
@@ -83,7 +84,8 @@ export class HomePage implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public themeService: ThemeService
   ) {}
 
   ngOnInit(): void {
@@ -117,6 +119,10 @@ export class HomePage implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
 
   setActiveNav(nav: string): void {

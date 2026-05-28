@@ -9,6 +9,19 @@
   --text-dark: #1a2e22;
   --text-mid: #4a7060;
   --text-light: #8aab97;
+  --blue-active: #4A90FF;
+  --blue-light: #eef4ff;
+  --blue-dark: #2d5aa0;
+}
+
+:host-context(.dark-theme) {
+  --green-light: #143326;
+  --white: #17221d;
+  --gray-bg: #0d1411;
+  --text-dark: #eef7f1;
+  --text-mid: #b5cabe;
+  --text-light: #83a191;
+  --blue-light: #1a2a45;
 }
 
 ion-content.section-content {
@@ -154,35 +167,88 @@ ion-content.section-content {
   font-weight: 600;
 }
 
-// Rutas list
+// ═══════════════════════════════════
+// Rutas List — Tarjetas expandibles
+// ═══════════════════════════════════
 .rutas-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.ruta-card {
-  background: var(--white);
+.ruta-card-wrapper {
   border-radius: 16px;
-  padding: 16px;
+  overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  transition: transform 0.15s ease;
+  transition: box-shadow 0.3s ease;
 
-  &:active {
-    transform: scale(0.98);
+  &:has(.ruta-activa) {
+    box-shadow: 0 4px 20px rgba(74, 144, 255, 0.18);
   }
 }
 
-.ruta-color {
+.ruta-card {
+  background: var(--white);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: background 0.2s ease;
+  position: relative;
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  &.ruta-activa {
+    background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%);
+    border-left: 4px solid var(--blue-active);
+    padding-left: 12px;
+  }
+
+  &.ruta-expanded {
+    border-radius: 0;
+  }
+}
+
+// Barra de color de la ruta
+.ruta-color-bar {
   width: 12px;
   height: 44px;
   border-radius: 6px;
   flex-shrink: 0;
+  position: relative;
+  overflow: visible;
 }
 
+.active-pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--blue-active);
+  animation: activePulse 2s ease-out infinite;
+}
+
+@keyframes activePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 144, 255, 0.5);
+    opacity: 1;
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(74, 144, 255, 0);
+    opacity: 0.7;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 144, 255, 0);
+    opacity: 1;
+  }
+}
+
+// Info de la ruta
 .ruta-info {
   flex: 1;
   min-width: 0;
@@ -197,17 +263,228 @@ ion-content.section-content {
   text-overflow: ellipsis;
 }
 
-
-
-.ruta-arrow svg {
-  width: 18px;
-  height: 18px;
-  stroke: var(--text-light);
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.ruta-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
 }
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue-active);
+  animation: statusBlink 1.5s ease-in-out infinite;
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue-active);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// Flecha de toggle
+.ruta-toggle-icon {
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--text-light);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+// ═══════════════════════════════════
+// Panel de Detalle (expandible)
+// ═══════════════════════════════════
+.ruta-detail-panel {
+  max-height: 0;
+  overflow: hidden;
+  background: var(--white);
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.25s ease;
+  opacity: 0;
+  padding: 0 16px;
+
+  &.panel-visible {
+    max-height: 300px;
+    padding: 0 16px 16px;
+    opacity: 1;
+  }
+}
+
+// Info del recorrido activo
+.detail-active-info {
+  background: var(--gray-bg);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.detail-icon {
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  background: var(--white);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.detail-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-top: 1px;
+}
+
+.detail-sub {
+  font-weight: 500;
+  color: var(--text-mid);
+}
+
+// Mensaje de inactividad
+.detail-inactive-msg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--gray-bg);
+  border-radius: 12px;
+  margin-bottom: 14px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-light);
+    flex-shrink: 0;
+  }
+
+  span {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-light);
+  }
+}
+
+// ═══════════════════════════════════
+// Botones de Acción
+// ═══════════════════════════════════
+.detail-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.detail-actions-dual {
+  .action-btn {
+    flex: 1;
+  }
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.action-btn-primary {
+  background: var(--blue-active);
+  color: white;
+  box-shadow: 0 4px 14px rgba(74, 144, 255, 0.35);
+
+  &:active {
+    background: var(--blue-dark);
+  }
+}
+
+.action-btn-secondary {
+  background: var(--green-primary);
+  color: white;
+  box-shadow: 0 4px 14px rgba(58, 173, 111, 0.3);
+
+  &:active {
+    background: var(--green-dark);
+  }
+}
+
+.action-btn-disabled {
+  background: #e5e9e7;
+  color: var(--text-light);
+  cursor: not-allowed;
+  box-shadow: none;
+
+  svg {
+    opacity: 0.5;
+  }
+
+  &:active {
+    transform: none;
+  }
+}
+
 // ═══════════════════════════════════
 // Pantalla de Bloqueo Óptima
 // ═══════════════════════════════════
@@ -279,12 +556,8 @@ ion-content.section-content {
   }
 }
 
-
-
 @media (max-width: 480px) {
   .section-header-bar {
     padding: 16px 16px 14px;
   }
-
-
 }
